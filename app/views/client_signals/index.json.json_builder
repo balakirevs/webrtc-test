@@ -1,0 +1,4 @@
+array @signals do |signal|
+  type signal.signal_type
+  data signal.data
+end

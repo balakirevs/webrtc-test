@@ -23,11 +23,11 @@ ActiveRecord::Schema.define(:version => 20130311152328) do
   end
 
   create_table "client_signals", :force => true do |t|
-    t.string   "type"
+    t.string   "signal_type"
     t.text     "data"
-    t.integer  "read"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "read",        :default => 0
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
 
 end

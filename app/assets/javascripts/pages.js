@@ -27,7 +27,7 @@ function answer() {
 }
 
 function onOffer(sessionDescription) {
-  pc.setLocalDescription(localDescription);
+  pc.setLocalDescription(sessionDescription);
   signalSendOffer(sessionDescription);
 }
 
@@ -53,7 +53,7 @@ $('#answer').click(answer);
 // Signaling
 function fetchSignal() {
   $.ajax({
-    url: '/client_signals',
+    url: '/client_signals.json',
     type: 'get',
     dataType: 'json',
     success: onFetchedSignal
@@ -61,7 +61,8 @@ function fetchSignal() {
 }
 
 function onFetchedSignal(signal) {
-  fetchSignal();
+  console.log(signal);
+  setTimeout(fetchSignal, 5000);
 }
 
 function signalSendCandidate(candidate) {
@@ -72,6 +73,7 @@ function signalSendCandidate(candidate) {
 }
 
 function signalSendOffer(sessionDescription) {
+  console.log('Sending offer...');
   signalSend({
     type: 'offer',
     data: JSON.stringify(sessionDescription)
@@ -80,7 +82,7 @@ function signalSendOffer(sessionDescription) {
 
 function signalSend(signal) {
   $.ajax({
-    url: '/client_signals',
+    url: '/client_signals.json',
     type: 'post',
     data: {
       type: signal.type,
