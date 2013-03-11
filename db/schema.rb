@@ -16,8 +16,10 @@ ActiveRecord::Schema.define(:version => 20130310233914) do
   create_table "calls", :force => true do |t|
     t.text     "callee_session"
     t.text     "caller_session"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.text     "callee_ice_candidate"
+    t.text     "caller_ice_candidate"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
   end
 
 end
