@@ -1,10 +1,7 @@
 Callee::Application.routes.draw do
 
-  resources :calls do
-    member do
-      post :answer
-    end
-  end
+  resources :calls
+  resources :client_signals
 
   root to: 'pages#index'
 

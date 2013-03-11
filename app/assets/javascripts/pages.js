@@ -53,7 +53,7 @@ $('#answer').click(answer);
 // Signaling
 function fetchSignal() {
   $.ajax({
-    url: '/signals',
+    url: '/client_signals',
     type: 'get',
     dataType: 'json',
     success: onFetchedSignal
@@ -80,7 +80,7 @@ function signalSendOffer(sessionDescription) {
 
 function signalSend(signal) {
   $.ajax({
-    url: '/signals',
+    url: '/client_signals',
     type: 'post',
     data: {
       type: signal.type,
