@@ -7,6 +7,7 @@ function onGetUserMediaSuccess(stream) {
   localStream = stream;
   $('.local video').get(0).src = URL.createObjectURL(stream);
   $('#call').removeAttr('disabled');
+  fetchSignals();
 }
 
 // PeerConnection
@@ -51,18 +52,28 @@ $('#call').click(call);
 $('#answer').click(answer);
 
 // Signaling
-function fetchSignal() {
+function fetchSignals() {
   $.ajax({
     url: '/client_signals.json',
     type: 'get',
     dataType: 'json',
-    success: onFetchedSignal
+    success: onFetchedSignals
   });
 }
 
-function onFetchedSignal(signal) {
-  console.log(signal);
-  setTimeout(fetchSignal, 5000);
+function onFetchedSignals(signals) {
+  $.each(signals, function (i, obj) {
+    switch (obj.type) {
+      case 'candidate':
+        var candidate = JSON.parse(obj.data);
+        pc.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log('Added RTCIceCandidate: ', obj.data);
+        break;
+      case 'offer':
+        break;
+    }
+  });
+  setTimeout(fetchSignals, 5000);
 }
 
 function signalSendCandidate(candidate) {
@@ -95,5 +106,3 @@ function signalSend(signal) {
 function onSignalSent(response) {
   console.log('Signal sent successfully.');
 }
-
-fetchSignal();
