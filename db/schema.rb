@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130310233914) do
+ActiveRecord::Schema.define(:version => 20130311152328) do
 
   create_table "calls", :force => true do |t|
     t.text     "callee_session"
@@ -20,6 +20,13 @@ ActiveRecord::Schema.define(:version => 20130310233914) do
     t.text     "caller_ice_candidate"
     t.datetime "created_at",           :null => false
     t.datetime "updated_at",           :null => false
+  end
+
+  create_table "client_signals", :force => true do |t|
+    t.string   "type"
+    t.text     "data"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
 end
