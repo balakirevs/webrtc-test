@@ -5,20 +5,53 @@
   </head>
   <body>
 
-    <video style="height: 500px; width: 500px;" autoplay></video>
+    <div class="local">
+      <video style="height: 500px; width: 500px;" autoplay></video>
+    </div>
+    <div class="remote">
+      <video style="height: 500px; width: 500px;" autoplay></video>
+    </div>
+
+    <button>Llamar</button>
+
 
     <script>
 
-      navigator.webkitGetUserMedia({ video: true }, onSuccess, onError);
+      var pc,
+          servers = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+
+      navigator.webkitGetUserMedia({ video: true }, onSuccess);
 
       function onSuccess (stream) {
-        console.log('yey')
-        var video = document.querySelector('video');
-        console.log(video)
-        video.src = URL.createObjectURL(stream);
+        window.stream = stream;
+        document.querySelector('.local video').src = URL.createObjectURL(stream);
       }
-      function onError() {
-        console.log('error')
+
+      document.querySelector('button').onClick = call;
+
+      function call() {
+        if (!!window.stream) {
+          pc = new webkitRTCPeerConnection(servers);
+          pc.onicecandidate = onIceCandidate;
+          pc.onaddstream = onAddStream;
+          pc.addStream(stream);
+          pc.createOffer(onGetLocalDescription);
+        }
+      }
+
+      function onIceCandidate(a, b, c) {
+        console.log(a);
+        console.log(b);
+        console.log(c);
+      }
+
+      function onAddStream(remoteStream) {
+        document.querySelector('.remote video').src = URL.createObjectURL(stream);
+      }
+
+      function onGetLocalDescription(localDescription) {
+        console.log(localDescription);
+        pc.setLocalDescription(localDescription);
       }
     </script>
 

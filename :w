@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ruby on Rails: Welcome aboard</title>
+  </head>
+  <body>
+
+    <video style="height: 500px; width: 500px;" autoplay></video>
+
+    <button>Llamar</button>
+
+
+    <script>
+
+      navigator.webkitGetUserMedia({ video: true }, onSuccess);
+
+      function onSuccess (stream) {
+        window.stream = stream;
+        document.querySelector('video').src = URL.createObjectURL(stream);
+      }
+
+      document.querySelector('button').onClick = call;
+
+      function call() {
+        if (!!window.stream) {
+          var servers = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+          var pc = new webkitRTCPeerConnection(servers);
+          pc.onicecandidate = onIceCandidate;
+          pc.addStream(stream);
+        }
+      }
+
+      function onIceCandidate(a, b, c) {
+        console.log(a);
+        console.log(b);
+        console.log(c);
+      }
+    </script>
+
+
+  </body>
+</html>
