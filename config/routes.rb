@@ -6,4 +6,6 @@ Callee::Application.routes.draw do
     end
   end
 
+  root to: 'pages#index'
+
 end
