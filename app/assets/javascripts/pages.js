@@ -14,14 +14,21 @@ var pc, localDescription, iceCandidate;
 
 function call() {
   if (!!localStream) {
+    console.log('Calling...');
     pc = new webkitRTCPeerConnection(null);
     pc.onicecandidate = onIceCandidate;
     pc.onaddstream = onAddStream;
     pc.addStream(localStream);
+    pc.createOffer(onOffer);
   }
 }
 
 function answer() {
+}
+
+function onOffer(sessionDescription) {
+  pc.setLocalDescription(localDescription);
+  signalSendOffer(sessionDescription);
 }
 
 function onIceCandidate(event) {
@@ -48,20 +55,27 @@ function fetchSignal() {
   $.ajax({
     url: '/signals',
     type: 'get',
+    dataType: 'json',
     success: onFetchedSignal
   });
 }
 
-function onFetchedSignal() {
+function onFetchedSignal(signal) {
   fetchSignal();
 }
 
-function signalSendCandidate() {
-  signalSendOffer();
+function signalSendCandidate(candidate) {
+  signalSend({
+    type: 'candidate',
+    data: JSON.stringify(candidate)
+  });
 }
 
-function signalSendSessionDescription() {
-  signalSendOffer();
+function signalSendOffer(sessionDescription) {
+  signalSend({
+    type: 'offer',
+    data: JSON.stringify(sessionDescription)
+  });
 }
 
 function signalSend(signal) {
@@ -77,6 +91,7 @@ function signalSend(signal) {
 }
 
 function onSignalSent(response) {
+  console.log('Signal sent successfully.');
 }
 
 fetchSignal();
