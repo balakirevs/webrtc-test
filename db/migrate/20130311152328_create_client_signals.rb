@@ -5,6 +5,7 @@ class CreateClientSignals < ActiveRecord::Migration
       t.text :data
       t.integer :read, default: 0
       t.integer :client_id
+      t.integer :call_id
 
       t.timestamps
     end
