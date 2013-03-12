@@ -21,6 +21,7 @@ function call() {
     pc.onaddstream = onAddStream;
     pc.addStream(localStream);
     pc.createOffer(onOfferCreated);
+    $('#call').attr('disabled', true);
   }
 }
 
