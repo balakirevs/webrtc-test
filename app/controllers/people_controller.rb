@@ -5,7 +5,7 @@ class PeopleController < ApplicationController
   end
 
   def create
-    @person = Person.new(params[:person])
+    @person = Person.find_or_create_by_name(params[:person][:name])
     if @person.save
       session[:person_id] = @person.id
       redirect_to action: :me
@@ -15,8 +15,11 @@ class PeopleController < ApplicationController
   end
 
   def me
-    @person = Person.find(session[:person_id])
+    @person = Person.find_by_id(session[:person_id])
     @people = Person.where('id != ?', session[:person_id])
+    if @person.nil?
+      redirect_to action: :new
+    end
   end
 
   def call
