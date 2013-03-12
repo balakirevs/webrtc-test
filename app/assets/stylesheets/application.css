@@ -11,3 +11,28 @@
  *= require_self
  *= require_tree .
  */
+
+
+#active_call {
+  width: 690px;
+  height: 480px;
+  position: relative;
+}
+
+#local_video {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 128px;
+  height: 96px;
+  z-index: 10;
+}
+
+#remote_video {
+  width: 640px;
+  height: 480px;
+  position: absolute;
+  left: 0;
+  top: 50px;
+  z-index: 0;
+}
