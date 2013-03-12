@@ -7,26 +7,34 @@ function onGetUserMediaSuccess(stream) {
   localStream = stream;
   $('.local video').get(0).src = URL.createObjectURL(stream);
   $('#call').removeAttr('disabled');
+
+  pc = new webkitRTCPeerConnection(null);
+  pc.onicecandidate = onIceCandidateCreated;
+  pc.onaddstream = onRemoteStreamAdded;
+  pc.addStream(localStream);
+
   fetchSignals();
 }
 
 // PeerConnection
-var pc, localDescription, iceCandidate;
+var pc, localDescription, iceCandidate, 
+    caller = false;
 
 function call() {
-  if (!!localStream) {
-    console.log('Calling...');
-    pc = new webkitRTCPeerConnection(null);
-    pc.onicecandidate = onIceCandidate;
-    pc.onaddstream = onAddStream;
-    pc.addStream(localStream);
-    pc.createOffer(onOfferCreated);
-    $('#call').attr('disabled', true);
-  }
+  $('#call').attr('disabled', true);
+  console.log('Calling...');
+  pc.createOffer(onOfferCreated);
 }
 
 function answer() {
+  $('#answer').attr('disabled', true);
+  console.log('Answering call...');
   pc.createAnswer(onAnswerCreated);
+}
+
+function onRemoteStreamAdded(event) {
+  console.log('Received remote stream', event);
+  $('.remote video').get(0).src = URL.createObjectURL(event.stream);
 }
 
 function onOfferCreated(sessionDescription) {
@@ -34,20 +42,31 @@ function onOfferCreated(sessionDescription) {
   signalSendOffer(sessionDescription);
 }
 
-function onOfferReceived() {
+function onOfferReceived(offer) {
   $('#answer').removeAttr('disabled');
   $('#call').attr('disabled', true);
+  pc.setRemoteDescription(offer);
+  pc.createAnswer(onAnswerCreated);
 }
 
 function onAnswerCreated(sessionDescription) {
-  pc.setLocalDescription();
+  pc.setLocalDescription(sessionDescription);
   signalSendAnswer(sessionDescription);
 }
 
-function onIceCandidate(event) {
+function onAnswerReceived(answer) {
+  pc.setRemoteDescription(answer);
+}
+
+function onIceCandidateCreated(event) {
   if (event.candidate) {
+    console.log('Sending candidate...');
     signalSendCandidate(event.candidate);
   }
+}
+
+function onIceCandidateReceived(candidate) {
+  pc.addIceCandidate(candidate);
 }
 
 function onAddStream(event) {
@@ -81,20 +100,22 @@ function onFetchedSignals(signals) {
   $.each(signals, function (i, obj) {
     switch (obj.type) {
       case 'candidate':
-        var candidate = JSON.parse(obj.data);
-        pc.addIceCandidate(new RTCIceCandidate(candidate));
-        console.log('Added RTCIceCandidate: ', obj.data);
+        var data = JSON.parse(obj.data);
+        var candidate = new RTCIceCandidate(data);
+        console.log('Received RTCIceCandidate: ');
+        onIceCandidateReceived(candidate);
         break;
       case 'offer':
-        var offer = JSON.parse(obj.data);
-        pc.setRemoteDescription(offer);
-        console.log('Received offer: ', obj.data);
-        onOfferReceived();
+        var data = JSON.parse(obj.data);
+        var offer = new RTCSessionDescription(data);
+        console.log('Received offer: ');
+        onOfferReceived(offer);
         break;
       case 'answer':
-        var answer = JSON.parse(obj.data);
-        pc.setRemoteDescription(new RTCSessionDescription(answer));
-        console.log('Received answer: ', obj.data);
+        var data = JSON.parse(obj.data);
+        var answer = new RTCSessionDescription(data);
+        console.log('Received answer: ');
+        onAnswerReceived(answer);
         break;
     }
   });

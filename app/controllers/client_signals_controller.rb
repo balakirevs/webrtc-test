@@ -3,7 +3,7 @@ class ClientSignalsController < ApplicationController
   respond_to :json
 
   def index
-    @signals = ClientSignal.where('read = 0 AND client_id != ?', params[:client_id]).order('id DESC')
+    @signals = ClientSignal.where('read = 0 AND client_id != ?', params[:client_id]).order('id')
     @signals.map { |s| s.update_attribute(:read, 1) }
     respond_with @signals
   end
