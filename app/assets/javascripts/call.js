@@ -22,6 +22,8 @@ var RTC = (function () {
 
     fetchSignals();
     o.afterGetUserMediaSuccess(); 
+
+    // TODO: send 'pickup' signal here
   }
 
   function onRemoteStreamAdded(event) {
@@ -85,7 +87,7 @@ var RTC = (function () {
   function onFetchedSignals(signals) {
     $.each(signals, function (i, obj) {
       switch (obj.type) {
-        case 'pickedup':
+        case 'pickup':
           // start call
           pc.createOffer(onOfferCreated);
           break;

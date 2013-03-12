@@ -7,10 +7,4 @@ RTC.remoteVideoTag = $('video#remote_video').get(0);
 RTC.call_id = call_id;
 RTC.client_id = client_id;
 
-RTC.afterGetUserMediaSuccess = function () {
-  if (is_caller) {
-    RTC.call();
-  }
-}
-
 navigator.webkitGetUserMedia({ video: true, audio: true }, RTC.onGetUserMediaSuccess);
