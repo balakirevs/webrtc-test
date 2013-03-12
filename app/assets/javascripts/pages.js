@@ -25,7 +25,7 @@ function call() {
 }
 
 function answer() {
-  alert('answer')
+  pc.createAnswer(onAnswerCreated);
 }
 
 function onOfferCreated(sessionDescription) {
@@ -36,6 +36,11 @@ function onOfferCreated(sessionDescription) {
 function onOfferReceived() {
   $('#answer').removeAttr('disabled');
   $('#call').attr('disabled', true);
+}
+
+function onAnswerCreated(sessionDescription) {
+  pc.setLocalDescription();
+  signalSendAnswer(sessionDescription);
 }
 
 function onIceCandidate(event) {
@@ -84,6 +89,10 @@ function onFetchedSignals(signals) {
         pc.setRemoteDescription(offer);
         onOfferReceived();
         break;
+      case 'answer':
+        var answer = JSON.parse(obj.data);
+        pc.setRemoteDescription(new RTCSessionDescription(answer));
+        break;
     }
   });
   setTimeout(fetchSignals, 5000);
@@ -100,6 +109,14 @@ function signalSendOffer(sessionDescription) {
   console.log('Sending offer...');
   signalSend({
     type: 'offer',
+    data: JSON.stringify(sessionDescription)
+  });
+}
+
+function signalSendAnswer(sessionDescription) {
+  console.log('Sending answer...');
+  signalSend({
+    type: 'answer',
     data: JSON.stringify(sessionDescription)
   });
 }
