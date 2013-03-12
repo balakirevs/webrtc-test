@@ -88,11 +88,13 @@ function onFetchedSignals(signals) {
       case 'offer':
         var offer = JSON.parse(obj.data);
         pc.setRemoteDescription(offer);
+        console.log('Received offer: ', obj.data);
         onOfferReceived();
         break;
       case 'answer':
         var answer = JSON.parse(obj.data);
         pc.setRemoteDescription(new RTCSessionDescription(answer));
+        console.log('Received answer: ', obj.data);
         break;
     }
   });
