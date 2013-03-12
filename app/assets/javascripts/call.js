@@ -33,7 +33,7 @@ var RTC = (function () {
   // PeerConnection
   var pc, callWaiting;
 
-  o.call = function() {
+  function call() {
     pc.createOffer(onOfferCreated);
   }
 
@@ -85,6 +85,14 @@ var RTC = (function () {
   function onFetchedSignals(signals) {
     $.each(signals, function (i, obj) {
       switch (obj.type) {
+        case 'pickedup':
+          // start call
+          pc.createOffer(onOfferCreated);
+          break;
+        case 'hangup':
+          // end call
+          pc.close();
+          break;
         case 'candidate':
           var data = JSON.parse(obj.data);
           var candidate = new RTCIceCandidate(data);
