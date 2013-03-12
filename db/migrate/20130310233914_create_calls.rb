@@ -1,10 +1,9 @@
 class CreateCalls < ActiveRecord::Migration
   def change
     create_table :calls do |t|
-      t.text :callee_session
-      t.text :caller_session
-      t.text :callee_ice_candidate
-      t.text :caller_ice_candidate
+      t.string :name
+      t.integer :caller_id
+      t.integer :callee_id
 
       t.timestamps
     end

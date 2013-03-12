@@ -1,4 +1,8 @@
 class Call < ActiveRecord::Base
-  attr_accessible :callee_session, :caller_session,
-                  :callee_ice_candidate, :caller_ice_candidate
+
+  attr_accessible :name
+
+  has_one :caller, class_name: Person
+  has_one :callee, class_name: Person
+
 end
