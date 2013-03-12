@@ -71,7 +71,7 @@ function fetchSignals() {
   $.ajax({
     url: '/client_signals.json',
     type: 'get',
-    data: { client: randid },
+    data: { client_id: randid },
     dataType: 'json',
     success: onFetchedSignals
   });
