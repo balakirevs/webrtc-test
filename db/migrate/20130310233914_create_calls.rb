@@ -1,7 +1,7 @@
 class CreateCalls < ActiveRecord::Migration
   def change
     create_table :calls do |t|
-      t.string :name
+      t.integer :status, default: 0
       t.integer :caller_id
       t.integer :callee_id
 

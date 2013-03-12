@@ -14,11 +14,11 @@
 ActiveRecord::Schema.define(:version => 20130312204138) do
 
   create_table "calls", :force => true do |t|
-    t.string   "name"
+    t.integer  "status",     :default => 0
     t.integer  "caller_id"
     t.integer  "callee_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
   end
 
   create_table "client_signals", :force => true do |t|

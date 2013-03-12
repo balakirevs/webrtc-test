@@ -9,20 +9,18 @@ var RTC = (function () {
   o.afterRemoteStreamAdded = function () {};
 
   // MediaStream
-  var localStream,
-      localVideoTag,
-      remoteVideoTag;
+  var localStream;
 
   o.onGetUserMediaSuccess = function(stream) {
     localStream = stream;
     o.localVideoTag.src = URL.createObjectURL(stream);
 
-    o.afterGetUserMediaSuccess(); 
-
     pc = new webkitRTCPeerConnection(null);
     pc.onicecandidate = onIceCandidateCreated;
     pc.onaddstream = onRemoteStreamAdded;
     pc.addStream(localStream);
+
+    o.afterGetUserMediaSuccess(); 
   }
 
   function onRemoteStreamAdded(event) {
@@ -35,10 +33,7 @@ var RTC = (function () {
   var pc, callWaiting;
 
   o.call = function() {
-    if (!callWaiting) {
-      console.log('Calling...');
-      pc.createOffer(onOfferCreated);
-    }
+    pc.createOffer(onOfferCreated);
   }
 
   function onOfferCreated(sessionDescription) {
@@ -73,14 +68,14 @@ var RTC = (function () {
   }
 
   // Signaling: Long-polling
-  var randid = Math.round(Math.random() * 100000);
-
-  // Signaling
-  o.fetchSignals = function() {
+  function fetchSignals() {
     $.ajax({
       url: '/client_signals.json',
       type: 'get',
-      data: { client_id: randid },
+      data: { 
+        client_id: o.client_id,
+        call_id: o.call_id
+      },
       dataType: 'json',
       success: onFetchedSignals
     });
@@ -109,7 +104,7 @@ var RTC = (function () {
           break;
       }
     });
-    setTimeout(o.fetchSignals, 2000);
+    setTimeout(fetchSignals, 2000);
   }
 
   function signalSendCandidate(candidate) {
@@ -142,10 +137,13 @@ var RTC = (function () {
       data: {
         type: signal.type,
         data: signal.data,
-        client_id: randid
+        client_id: o.client_id,
+        call_id: o.call_id
       }
     });
   }
+
+  fetchSignals();
 
   return o;
 

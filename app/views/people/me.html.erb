@@ -1,0 +1,44 @@
+<h1>Hola <%= @person.name %>!</h1>
+
+<div id="active_call">
+  <% unless @person.active_call.nil? %>
+    <video id="local_video" autoplay></video>
+    <video id="remote_video" autoplay></video>
+    <p id="call_status">Waiting</p>
+    <%= link_to 'Cortar', hangup_call_path(@person.active_call) %>
+    <script>
+      var call_id = <%= @person.active_call.id %>;
+      var client_id = <%= @person.id %>;
+      var is_caller = <%= @person.active_call.caller_id == @person.id %>;
+    </script>
+    <%= javascript_include_tag 'people/me' %>
+  <% end %>
+</div>
+
+<div id="waiting_calls">
+  <h1>Llamadas en espera <%= link_to 'Volver a cargar', me_people_path %></h1>
+  <% if @person.waiting_calls %>
+  <ul>
+    <% @person.waiting_calls.each do |call| %>
+      <li>
+        <h3><%= call.caller.name %></h3>
+        <%= link_to 'Contestar', answer_call_path(call) %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+</div>
+
+<div id="other_people">
+  <h1>Otras personas <%= link_to 'Volver a cargar', me_people_path %></h1>
+  <ul>
+    <% @people.each do |person| %>
+      <li>
+        <h3><%= person.name %></h3>
+        <% if @person.active_call.nil? %>
+          <%= link_to "Llamar a #{person.name}", call_person_path(person) %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

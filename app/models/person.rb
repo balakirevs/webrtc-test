@@ -1,6 +1,15 @@
 class Person < ActiveRecord::Base
+
   attr_accessible :name
 
-  has_many :hosted_calls, class_name: Call, foreign_key: :caller_id
-  has_many :answered_calls, class_name: Call, foreign_key: :callee_id
+  def active_call
+    calls = Call.where('(caller_id = ? AND status < 2) OR (callee_id = ? AND status = 1)', id, id)
+    calls.first unless calls.empty?
+  end
+
+  def waiting_calls
+    calls = Call.where('callee_id = ? AND status = 0', id)
+    calls
+  end
+
 end

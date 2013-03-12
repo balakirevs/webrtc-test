@@ -1,8 +1,8 @@
 class Call < ActiveRecord::Base
 
-  attr_accessible :name
+  attr_accessible :status, :caller_id, :callee_id
 
-  has_one :caller, class_name: Person
-  has_one :callee, class_name: Person
+  belongs_to :caller, class_name: Person
+  belongs_to :callee, class_name: Person
 
 end
