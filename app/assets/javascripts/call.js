@@ -20,6 +20,7 @@ var RTC = (function () {
     pc.onaddstream = onRemoteStreamAdded;
     pc.addStream(localStream);
 
+    fetchSignals();
     o.afterGetUserMediaSuccess(); 
   }
 
@@ -142,8 +143,6 @@ var RTC = (function () {
       }
     });
   }
-
-  fetchSignals();
 
   return o;
 
