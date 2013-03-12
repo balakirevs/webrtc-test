@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20130311152328) do
     t.string   "signal_type"
     t.text     "data"
     t.integer  "read",        :default => 0
+    t.integer  "client_id"
     t.datetime "created_at",                 :null => false
     t.datetime "updated_at",                 :null => false
   end

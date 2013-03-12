@@ -20,16 +20,22 @@ function call() {
     pc.onicecandidate = onIceCandidate;
     pc.onaddstream = onAddStream;
     pc.addStream(localStream);
-    pc.createOffer(onOffer);
+    pc.createOffer(onOfferCreated);
   }
 }
 
 function answer() {
+  alert('answer')
 }
 
-function onOffer(sessionDescription) {
+function onOfferCreated(sessionDescription) {
   pc.setLocalDescription(sessionDescription);
   signalSendOffer(sessionDescription);
+}
+
+function onOfferReceived() {
+  $('#answer').removeAttr('disabled');
+  $('#call').attr('disabled', true);
 }
 
 function onIceCandidate(event) {
@@ -42,6 +48,9 @@ function onAddStream(event) {
   $('.remote video').get(0).src = URL.createObjectURL(event.stream);
   console.log('Got remote stream');
 }
+
+/******************************************/
+var randid = Math.round(Math.random() * 100000);
 
 navigator.webkitGetUserMedia(
   { audio: true, video: true },
@@ -56,6 +65,7 @@ function fetchSignals() {
   $.ajax({
     url: '/client_signals.json',
     type: 'get',
+    data: { client: randid },
     dataType: 'json',
     success: onFetchedSignals
   });
@@ -70,6 +80,9 @@ function onFetchedSignals(signals) {
         console.log('Added RTCIceCandidate: ', obj.data);
         break;
       case 'offer':
+        var offer = JSON.parse(obj.data);
+        pc.setRemoteDescription(offer);
+        onOfferReceived();
         break;
     }
   });
@@ -97,7 +110,8 @@ function signalSend(signal) {
     type: 'post',
     data: {
       type: signal.type,
-      data: signal.data
+      data: signal.data,
+      client_id: randid
     },
     success: onSignalSent
   });
